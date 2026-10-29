@@ -15,6 +15,22 @@ class GymRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_gym_registration_explains_the_minimum_password_length_in_french(): void
+    {
+        $response = $this->postJson('/inscription-salle', [
+            'gym_name' => 'Nouvelle Salle',
+            'prenom' => 'Amsk',
+            'nom' => 'Marie',
+            'telephone' => '0701020304',
+            'email' => 'admin@nouvelle-salle.test',
+            'password' => 'Short123!',
+            'password_confirmation' => 'Short123!',
+        ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonPath('errors.password.0', 'Le mot de passe doit contenir au moins 12 caractères.');
+    }
+
     public function test_new_gym_admin_verifies_email_then_opens_their_gym_dashboard_without_relogging(): void
     {
         config()->set('services.resend.key', 'test-resend-key');

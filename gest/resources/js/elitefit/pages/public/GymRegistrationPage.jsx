@@ -178,12 +178,13 @@ export default function GymRegistrationPage() {
                         </label>
                         <label className="text-xs text-elite-muted">
                             Mot de passe
-                            <input className={inputClass} type="password" autoComplete="new-password" minLength={8} value={form.password} onChange={update('password')} required aria-invalid={Boolean(fieldErrors.password)} aria-describedby={fieldErrors.password ? 'gym-password-error' : undefined} />
+                            <input className={inputClass} type="password" autoComplete="new-password" minLength={12} value={form.password} onChange={update('password')} required aria-invalid={Boolean(fieldErrors.password)} aria-describedby={fieldErrors.password ? 'gym-password-hint gym-password-error' : 'gym-password-hint'} />
+                            <span id="gym-password-hint" className="mt-1 block">12 caractères minimum, avec une majuscule, une minuscule, un chiffre et un symbole.</span>
                             <FieldError id="gym-password-error" message={fieldErrors.password} />
                         </label>
                         <label className="text-xs text-elite-muted">
                             Confirmer le mot de passe
-                            <input className={inputClass} type="password" autoComplete="new-password" minLength={8} value={form.password_confirmation} onChange={update('password_confirmation')} required aria-invalid={Boolean(fieldErrors.password_confirmation)} aria-describedby={fieldErrors.password_confirmation ? 'gym-password-confirmation-error' : undefined} />
+                            <input className={inputClass} type="password" autoComplete="new-password" minLength={12} value={form.password_confirmation} onChange={update('password_confirmation')} required aria-invalid={Boolean(fieldErrors.password_confirmation)} aria-describedby={fieldErrors.password_confirmation ? 'gym-password-confirmation-error' : undefined} />
                             <FieldError id="gym-password-confirmation-error" message={fieldErrors.password_confirmation} />
                         </label>
                     </div>

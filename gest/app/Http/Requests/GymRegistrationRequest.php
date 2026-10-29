@@ -89,4 +89,16 @@ class GymRegistrationRequest extends FormRequest
             'turnstile_token' => $turnstile->validationRules('gym_registration'),
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'password.min' => 'Le mot de passe doit contenir au moins :min caractères.',
+        ];
+    }
 }
