@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Navigate, Outlet } from 'react-router-dom';
+import { Link, NavLink, Navigate, Outlet } from 'react-router-dom';
 import { IconBell, IconClipboardCheck, IconLayoutDashboard, IconMenu2, IconPackage, IconUsers } from '@tabler/icons-react';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import FirstLoginTour from '../components/admin/FirstLoginTour';
@@ -14,6 +14,8 @@ export default function AdminLayout() {
     const [gyms, setGyms] = useState([]);
     const [selectedGymId, setSelectedGymId] = useState('');
     const [billingStatus, setBillingStatus] = useState(null);
+    const [verificationMessage, setVerificationMessage] = useState('');
+    const [isResendingVerification, setIsResendingVerification] = useState(false);
 
     useEffect(() => {
         let ignore = false;
@@ -108,6 +110,24 @@ export default function AdminLayout() {
         setSelectedGymId(nextGymId);
     };
 
+    const resendVerification = async () => {
+        if (!user?.email || isResendingVerification) {
+            return;
+        }
+
+        setIsResendingVerification(true);
+        setVerificationMessage('');
+
+        try {
+            const { data } = await api.post('/auth/email-verification/resend', { email: user.email });
+            setVerificationMessage(data.message);
+        } catch (requestError) {
+            setVerificationMessage(requestError.response?.data?.message || 'Le code n’a pas pu être envoyé. Réessayez dans quelques instants.');
+        } finally {
+            setIsResendingVerification(false);
+        }
+    };
+
     return (
         <div className="arena-admin flex min-h-screen bg-elite-bg">
             {isMenuOpen && (
@@ -160,9 +180,21 @@ export default function AdminLayout() {
                     </div>
                 </header>
                 <main className="arena-admin-main d-flex min-w-0 flex-grow-1 flex-column">
+                    {user?.email_verification_required && (
+                        <div className="mx-3 mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 lg:mx-6">
+                            <span><strong>Adresse e-mail à vérifier.</strong> Votre espace est en consultation seule jusqu’à la confirmation de votre adresse.</span>
+                            <div className="flex flex-wrap items-center gap-3">
+                                {verificationMessage && <span role="status">{verificationMessage}</span>}
+                                <button type="button" onClick={resendVerification} disabled={isResendingVerification} className="font-semibold text-elite-gold underline disabled:opacity-60">
+                                    {isResendingVerification ? 'Envoi…' : 'Renvoyer le code'}
+                                </button>
+                                <Link to="/verification-email" state={{ email: user.email }} className="font-semibold text-elite-gold underline">Saisir le code</Link>
+                            </div>
+                        </div>
+                    )}
                     {billingStatus?.gym && !billingStatus.gym.is_approved && (
                         <div className="mx-3 mt-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 lg:mx-6">
-                            <strong>Salle en attente de validation.</strong> Vous pouvez créer {Math.max(0, (billingStatus.gym.subscriptions_limit ?? 3) - (billingStatus.gym.subscriptions_created ?? 0))} abonnement(s) de membre avant validation.
+                            <strong>Salle en attente de validation.</strong> Après vérification de votre e-mail, vous pourrez créer jusqu’à {Math.max(0, (billingStatus.gym.subscriptions_limit ?? 3) - (billingStatus.gym.subscriptions_created ?? 0))} abonnement(s) de membre avant validation.
                             <a href="/admin/aide" className="ml-2 font-semibold text-elite-gold underline">Contacter le Super Admin</a>
                         </div>
                     )}

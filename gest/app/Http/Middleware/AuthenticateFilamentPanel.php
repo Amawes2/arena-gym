@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
@@ -35,6 +36,15 @@ class AuthenticateFilamentPanel
             $request->session()->regenerateToken();
 
             return redirect()->to(Filament::getLoginUrl());
+        }
+
+        if ($user->roleEnum() === UserRole::Admin
+            && ! $user->email_verified_at
+            && ! in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true)) {
+            return response()->json([
+                'message' => 'Confirmez votre adresse e-mail pour activer les modifications de votre espace.',
+                'verification_required' => true,
+            ], 403);
         }
 
         return $next($request);

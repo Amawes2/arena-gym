@@ -30,6 +30,7 @@ class EmailVerificationController extends Controller
         $email = Str::lower(trim($data['email']));
         $pendingRegistration = PendingRegistration::query()
             ->where('email', $email)
+            ->where('role', UserRole::Membre->value)
             ->where('registration_expires_at', '>', now())
             ->first();
 
@@ -77,6 +78,7 @@ class EmailVerificationController extends Controller
         $email = Str::lower(trim($data['email']));
         $pendingRegistration = PendingRegistration::query()
             ->where('email', $email)
+            ->where('role', UserRole::Membre->value)
             ->where('registration_expires_at', '>', now())
             ->first();
 

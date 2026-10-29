@@ -33,6 +33,13 @@ class AdminOnly
         }
 
         if (! $user->isSuperAdmin() && ! in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true)) {
+            if ($role === UserRole::Admin && ! $user->email_verified_at) {
+                return response()->json([
+                    'message' => 'Confirmez votre adresse e-mail pour activer les modifications de votre espace.',
+                    'verification_required' => true,
+                ], 403);
+            }
+
             $gym = Gym::query()->find(CurrentGymResolver::id());
 
             if (! $gym) {

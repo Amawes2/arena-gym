@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use App\Models\PendingRegistration;
 use App\Models\User;
 use App\Services\CountryDetectionService;
@@ -76,6 +77,7 @@ class GymRegistrationRequest extends FormRequest
 
                     $registrationIsPending = PendingRegistration::query()
                         ->where('email', Str::lower(trim((string) $value)))
+                        ->where('role', '!=', UserRole::Admin->value)
                         ->where('registration_expires_at', '>', now())
                         ->exists();
 

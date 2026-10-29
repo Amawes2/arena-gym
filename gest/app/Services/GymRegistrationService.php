@@ -4,12 +4,48 @@ namespace App\Services;
 
 use App\Enums\UserRole;
 use App\Models\Gym;
+use App\Models\PendingRegistration;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class GymRegistrationService
 {
+    public function __construct(private EmailVerificationService $emailVerificationService) {}
+
+    /**
+     * @param  array{gym_name: string, prenom: string, nom: string, telephone: string, email: string, password: string, country_code?: string, currency_code?: string}  $data
+     * @return array{user: User, gym: Gym, verification_email_sent: bool}
+     */
+    public function registerGymOwner(array $data): array
+    {
+        $email = strtolower(trim($data['email']));
+
+        $registration = DB::transaction(function () use ($data, $email): array {
+            PendingRegistration::query()
+                ->where('email', $email)
+                ->where('role', UserRole::Admin->value)
+                ->delete();
+
+            return $this->createGymAndOwner([...$data, 'email' => $email]);
+        });
+
+        $verificationEmailSent = false;
+
+        try {
+            $this->emailVerificationService->sendCode($registration['user']);
+            $verificationEmailSent = true;
+        } catch (Throwable $exception) {
+            Log::warning('Email verification dispatch failed after gym registration.', [
+                'exception' => $exception::class,
+            ]);
+        }
+
+        return [...$registration, 'verification_email_sent' => $verificationEmailSent];
+    }
+
     /**
      * @param  array{gym_name: string, prenom: string, nom: string, telephone: string, email: string, password: string, country_code?: string, currency_code?: string}  $data
      * @return array{user: User, gym: Gym}
