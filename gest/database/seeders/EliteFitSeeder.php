@@ -11,11 +11,16 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class EliteFitSeeder extends Seeder
 {
     public function run(): void
     {
+        if (! app()->environment('local', 'testing')) {
+            throw new RuntimeException('Le seeder EliteFit est réservé aux environnements local et testing.');
+        }
+
         $owner = User::query()->create([
             'name' => 'Admin EliteFit',
             'email' => 'admin@elitefit.ci',

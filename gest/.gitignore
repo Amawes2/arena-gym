@@ -49,6 +49,11 @@ Thumbs.db
 **/*dump*.sql
 **/*backup*.sql
 
+# Local database scratch files and unrelated SQL Server projects
+/laravel
+/amsk/
+/kdk/
+
 # Generated files and local tooling
 .phpactor.json
 .phpunit.result.cache

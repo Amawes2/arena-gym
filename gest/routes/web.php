@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmailVerificationController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GymRegistrationController;
 use App\Http\Controllers\MagicLinkController;
 use Illuminate\Support\Facades\Route;
@@ -25,9 +26,13 @@ Route::get('/connexion/magic/{token}', [MagicLinkController::class, 'confirm'])
     ->where('token', '[A-Za-z0-9]{64}')
     ->middleware('signed')
     ->name('auth.magic.confirm');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+    ->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+    ->name('auth.google.callback');
 Route::post('/connexion/magic/{token}', [MagicLinkController::class, 'consume'])
     ->where('token', '[A-Za-z0-9]{64}')
-    ->middleware('signed')
+    ->middleware(['signed', 'throttle:magic-link-consume'])
     ->name('auth.magic.consume');
 Route::post('/inscription-salle', [GymRegistrationController::class, 'store'])
     ->middleware('throttle:gym-registration')

@@ -8,8 +8,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([
-            EliteFitSeeder::class,
-        ]);
+        if (! app()->environment('local', 'testing')) {
+            return;
+        }
+
+        $this->call(ArenaDemoSeeder::class);
     }
 }

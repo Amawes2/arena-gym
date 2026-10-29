@@ -42,6 +42,16 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('magic-link-consume', function (Request $request): array {
+            $tokenHash = hash('sha256', (string) $request->route('token'));
+
+            return [
+                Limit::perMinute(10)->by('magic-link-consume-ip:'.$request->ip()),
+                Limit::perMinute(5)->by('magic-link-consume-token:'.$tokenHash),
+                Limit::perHour(10)->by('magic-link-consume-token-hour:'.$tokenHash),
+            ];
+        });
+
         RateLimiter::for('gym-registration', function (Request $request): array {
             $email = Str::lower(trim((string) $request->input('email')));
 

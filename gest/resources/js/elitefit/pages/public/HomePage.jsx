@@ -48,12 +48,9 @@ export default function HomePage() {
                         La gestion de votre salle,
                         <span className="mt-2 block text-elite-gold">au même endroit.</span>
                     </h1>
-                    <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-elite-muted sm:text-lg">
-                        Membres, présences et paiements : retrouvez l’essentiel dans un espace simple, dédié à votre salle.
-                    </p>
                     <div className="mt-8 flex flex-wrap justify-center gap-3">
                         <PrimaryLink to="/inscription-salle">
-                            Créer l’espace de ma salle <IconArrowUpRight size={17} className="ml-2" />
+                            Créer ma salle <IconArrowUpRight size={17} className="ml-2" />
                         </PrimaryLink>
                         <Link
                             to="/connexion"
