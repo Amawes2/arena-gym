@@ -109,7 +109,7 @@ export default function GymRegistrationPage() {
                     <p className="text-xs tracking-[0.18em] text-elite-gold">VOTRE SALLE, VOTRE ESPACE</p>
                     <h1 className="mt-4 text-4xl leading-tight text-elite-text sm:text-5xl">Gérez votre salle dès aujourd’hui.</h1>
                     <p className="mt-5 text-sm leading-7 text-elite-muted">
-                        Créez votre espace de gestion et consultez immédiatement votre établissement. La vérification de l’e-mail sera nécessaire pour activer les modifications.
+                        
                     </p>
                     <p className="mt-8 text-sm text-elite-muted">
                         Vous avez déjà un espace ? <Link to="/connexion" className="text-elite-gold hover:underline">Connectez-vous</Link>
@@ -118,8 +118,7 @@ export default function GymRegistrationPage() {
                 <form onSubmit={submit} className="rounded-2xl border border-elite-border-light bg-elite-card p-6 shadow-2xl shadow-black/20 sm:p-9">
                     <HoneypotField value={form.website} onChange={update('website')} />
                     <h2 className="text-xl text-elite-text">Créer l’espace de ma salle</h2>
-                    <p className="mt-2 text-sm text-elite-muted">Votre compte est créé immédiatement. Vous pouvez consulter votre espace; les modifications seront activées après vérification de votre e-mail.</p>
-                    <div className="arena-form-fields-grid mt-7 gap-5">
+                    <p className="mt-2 text-sm text-elite-muted">
                         <label className="text-xs text-elite-muted sm:col-span-2">
                             Pays de la salle
                             <select
